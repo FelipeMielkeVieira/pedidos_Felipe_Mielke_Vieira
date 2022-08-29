@@ -16,13 +16,13 @@ async function buscarPorID(id) {
 
 async function criarPedido(dado) {
 
-    if (!dado.Number) {
-        return { erro: "Digite o número (Number)!" }
-    }
     if (!dado.UserId) {
         return { erro: "Digite o ID do Usuário (UserId)!" }
     }
     dado.status = "Em Aberto";
+
+    const pedidos = await crud.getWithFilter("Orders", "UserId", "==", dado.UserId);
+    dado.Number = pedidos.length + 1;
 
     try {
         const usuario = await crud.getById("Users", dado.UserId);
