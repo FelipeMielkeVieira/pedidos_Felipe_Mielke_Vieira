@@ -12,7 +12,7 @@ router.get("/:id", (req, res) => {
 })
 
 router.post("/", (req, res) => {
-    productsHandler.criarProduto(req.body).then((resposta) => res.json(resposta));    
+    productsHandler.criarProduto(req.body).then((resposta) => res.json(resposta));
 })
 
 module.exports = router;

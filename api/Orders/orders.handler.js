@@ -54,8 +54,8 @@ async function addProduto(dado) {
     if (!dado.OrderId) {
         return { erro: "Digite o ID do pedido (OrderId)" }
     }
-    if(!dado.Quantity) {
-        return { erro: "Digite a quantidade (Quantity)!"}
+    if (!dado.Quantity) {
+        return { erro: "Digite a quantidade (Quantity)!" }
     }
 
     let pedido;
@@ -104,8 +104,8 @@ async function removerProduto(dado) {
     if (!dado.OrderId) {
         return { erro: "Digite o ID do pedido (OrderId)" }
     }
-    if(!dado.Quantity) {
-        return { erro: "Digite a quantidade (Quantity)!"}
+    if (!dado.Quantity) {
+        return { erro: "Digite a quantidade (Quantity)!" }
     }
 
     let pedido;
@@ -128,9 +128,9 @@ async function removerProduto(dado) {
     const pedidoProduto = await crud.getWithFilter("OrderProducts", "OrderId", "==", dado.OrderId);
 
     for (const produto of pedidoProduto) {
-        if(produto.ProductId == dado.ProductId) {
+        if (produto.ProductId == dado.ProductId) {
             produto.Quantity -= dado.Quantity;
-            if(produto.Quantity < 1) {
+            if (produto.Quantity < 1) {
                 const dados = await crud.remove("OrderProducts", produto.id);
                 return dados;
             } else {
@@ -139,8 +139,8 @@ async function removerProduto(dado) {
             }
         }
     }
-    
-    return { erro: "O pedido não possui o produto indicado!"}
+
+    return { erro: "O pedido não possui o produto indicado!" }
 }
 
 module.exports = {

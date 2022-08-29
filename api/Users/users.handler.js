@@ -12,22 +12,22 @@ async function buscarPorID(id) {
 
 async function criarUsuario(dado) {
 
-    if(!dado.CPF) {
-        return { erro: "Digite o CPF!"}
+    if (!dado.CPF) {
+        return { erro: "Digite o CPF!" }
     }
-    if(!dado.Name) {
-        return { erro: "Digite o nome (Name)!"}
+    if (!dado.Name) {
+        return { erro: "Digite o nome (Name)!" }
     }
-    if(!dado.Surname) {
-        return { erro: "Digite o sobrenome (Surname)!"}
+    if (!dado.Surname) {
+        return { erro: "Digite o sobrenome (Surname)!" }
     }
 
     const usuarioExistente = await crud.getWithFilter("Users", "CPF", "==", dado.CPF);
-    if(!usuarioExistente[0]) {
+    if (!usuarioExistente[0]) {
         const dados = await crud.save("Users", undefined, dado);
         return dados;
     } else {
-        return { erro: "CPF Inválido!"}
+        return { erro: "CPF Inválido!" }
     }
 }
 

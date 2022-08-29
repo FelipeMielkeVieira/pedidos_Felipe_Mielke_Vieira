@@ -12,19 +12,19 @@ async function buscarPorID(id) {
 
 async function criarProduto(dado) {
 
-    if(!dado.Name) {
-        return { erro: "Digite o nome (Name)!"}
+    if (!dado.Name) {
+        return { erro: "Digite o nome (Name)!" }
     }
-    if(!dado.Price) {
-        return { erro: "Digite o preço (Price)!"}
+    if (!dado.Price) {
+        return { erro: "Digite o preço (Price)!" }
     }
 
     const produtoExistente = await crud.getWithFilter("Products", "Name", "==", dado.Name);
-    if(!produtoExistente[0]) {
+    if (!produtoExistente[0]) {
         const dados = await crud.save("Products", undefined, dado);
         return dados;
     } else {
-        return { erro: "Nome Inválido!"}
+        return { erro: "Nome Inválido!" }
     }
 }
 

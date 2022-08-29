@@ -12,11 +12,11 @@ router.get("/:id", (req, res) => {
 })
 
 router.post("/", (req, res) => {
-    ordersHandler.criarPedido(req.body).then((resposta) => res.json(resposta));    
+    ordersHandler.criarPedido(req.body).then((resposta) => res.json(resposta));
 })
 
 router.post("/produto", (req, res) => {
-    ordersHandler.addProduto(req.body).then((resposta) => res.json(resposta));    
+    ordersHandler.addProduto(req.body).then((resposta) => res.json(resposta));
 })
 
 router.put("/:id", (req, res) => {

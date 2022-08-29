@@ -12,7 +12,7 @@ router.get("/:id", (req, res) => {
 })
 
 router.post("/", (req, res) => {
-    usersHandler.criarUsuario(req.body).then((resposta) => res.json(resposta));    
+    usersHandler.criarUsuario(req.body).then((resposta) => res.json(resposta));
 })
 
 module.exports = router;

@@ -13,12 +13,12 @@ const {
 } = require('firebase/firestore/lite');
 
 const firebaseConfig = {
-  apiKey: "AIzaSyARPN8DwskatbiML1CvSCNYyMrIa8g8ST4",
-  authDomain: "pedidos-felipe-vieira.firebaseapp.com",
-  projectId: "pedidos-felipe-vieira",
-  storageBucket: "pedidos-felipe-vieira.appspot.com",
-  messagingSenderId: "749594569650",
-  appId: "1:749594569650:web:85ccc349e1851e5772d2ab"
+    apiKey: "AIzaSyARPN8DwskatbiML1CvSCNYyMrIa8g8ST4",
+    authDomain: "pedidos-felipe-vieira.firebaseapp.com",
+    projectId: "pedidos-felipe-vieira",
+    storageBucket: "pedidos-felipe-vieira.appspot.com",
+    messagingSenderId: "749594569650",
+    appId: "1:749594569650:web:85ccc349e1851e5772d2ab"
 };
 
 const app = initializeApp(firebaseConfig);
