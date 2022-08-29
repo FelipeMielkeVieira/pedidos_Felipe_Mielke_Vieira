@@ -37,13 +37,8 @@ async function criarPedido(dado) {
         }
     }
 
-    const pedidoExistente = await crud.getWithFilter("Orders", "Number", "==", dado.Number);
-    if (!pedidoExistente[0]) {
-        const dados = await crud.save("Orders", undefined, dado);
-        return dados;
-    } else {
-        return { erro: "Número Inválido!" }
-    }
+    const dados = await crud.save("Orders", undefined, dado);
+    return dados;
 }
 
 async function addProduto(dado) {
@@ -55,7 +50,7 @@ async function addProduto(dado) {
         return { erro: "Digite o ID do pedido (OrderId)" }
     }
     if (!dado.Quantity) {
-        return { erro: "Digite a quantidade (Quantity)!" }
+        dado.Quantity = 1;
     }
 
     let pedido;
@@ -105,7 +100,7 @@ async function removerProduto(dado) {
         return { erro: "Digite o ID do pedido (OrderId)" }
     }
     if (!dado.Quantity) {
-        return { erro: "Digite a quantidade (Quantity)!" }
+        dado.Quantity = 1;
     }
 
     let pedido;
