@@ -10,8 +10,12 @@ async function buscarPedidos() {
 }
 
 async function buscarPorID(id) {
-    const dados = await crud.getById("Orders", id);
-    return dados;
+    try {
+        const dados = await crud.getById("Orders", id);
+        return dados;
+    } catch (erro) {
+        return { erro: "ID Inválido!"}
+    }
 }
 
 async function criarPedido(dado) {
@@ -43,8 +47,8 @@ async function criarPedido(dado) {
 
 async function addProduto(dado) {
 
-    if (!dado.ProductId) {
-        return { erro: "Digite o ID do produto (ProductId)" }
+    if (!dado.ProductId && !dado.Products) {
+        return { erro: "Digite o ID do produto (ProductId) ou lista de produtos (Products)" }
     }
     if (!dado.OrderId) {
         return { erro: "Digite o ID do pedido (OrderId)" }
@@ -60,40 +64,66 @@ async function addProduto(dado) {
         return { erro: "Pedido Inválido!" }
     }
 
-    try {
-        const produto = await crud.getById("Products", dado.ProductId);
-    } catch (error) {
-        return { erro: "Produto Inválido!" }
-    }
-
     if (pedido.status != "Em Aberto") {
         return { erro: "Pedido já foi finalizado!" }
     }
 
-    const produtosPedido = await crud.getWithFilter("OrderProducts", "OrderId", "==", dado.OrderId);
-    for (const produto of produtosPedido) {
-        if (produto.ProductId == dado.ProductId) {
-            produto.Quantity += dado.Quantity;
-            const dados = await crud.save("OrderProducts", produto.id, produto);
-            return dados;
+    if(dado.ProductId) {
+        if(dado.Products) {
+            dado.Products.push({ProductId: dado.ProductId, Quantity: dado.Quantity});
+        } else {
+            dado.Products = [{ProductId: dado.ProductId, Quantity: dado.Quantity}];
         }
     }
 
-    const dados = await crud.save("OrderProducts", undefined, dado);
+    try {
+        for (const produto of dado.Products) {
+            const produtoPedido = await crud.getById("Products", produto.ProductId);   
+        }
+    } catch (error) {
+        return { erro: "Produto Inválido!" }
+    }
+
+    const produtosPedido = await crud.getWithFilter("OrderProducts", "OrderId", "==", dado.OrderId);
+    for (const produto of dado.Products) {
+        for (const produtoPedido of produtosPedido) {
+            if (produtoPedido.ProductId == produto.ProductId) {
+
+                if(!produto.Quantity) {
+                    produto.Quantity = dado.Quantity;
+                }
+                produtoPedido.Quantity += produto.Quantity;
+
+                const dados = await crud.save("OrderProducts", produtoPedido.id, produtoPedido);
+                return dados;
+            }
+        }   
+    }
+
+    for (const produto of dado.Products) {
+        produto.OrderId = dado.OrderId;
+        const dados = await crud.save("OrderProducts", undefined, produto);
+    }
+
+    const dados = await crud.getWithFilter("OrderProducts", "OrderId", "==", dado.OrderId);;
     return dados;
 }
 
 async function baixarPedido(id) {
-    const dado = await crud.getById("Orders", id);
-    dado.status = "Finalizado";
+    try {
+        const dado = await crud.getById("Orders", id);
+        dado.status = "Finalizado";
 
-    const dados = await crud.save("Orders", id, dado);
-    return dados;
+        const dados = await crud.save("Orders", id, dado);
+        return dados;
+    } catch (erro) {
+        return { erro: "Pedido Inválido!"}
+    }
 }
 
 async function removerProduto(dado) {
 
-    if (!dado.ProductId) {
+    if (!dado.ProductId && !dado.Products) {
         return { erro: "Digite o ID do produto (ProductId)" }
     }
     if (!dado.OrderId) {
@@ -110,32 +140,49 @@ async function removerProduto(dado) {
         return { erro: "Pedido Inválido!" }
     }
 
-    try {
-        const produto = await crud.getById("Products", dado.ProductId);
-    } catch (error) {
-        return { erro: "Produto Inválido!" }
-    }
-
     if (pedido.status != "Em Aberto") {
         return { erro: "Pedido já foi finalizado!" }
     }
 
-    const pedidoProduto = await crud.getWithFilter("OrderProducts", "OrderId", "==", dado.OrderId);
-
-    for (const produto of pedidoProduto) {
-        if (produto.ProductId == dado.ProductId) {
-            produto.Quantity -= dado.Quantity;
-            if (produto.Quantity < 1) {
-                const dados = await crud.remove("OrderProducts", produto.id);
-                return dados;
-            } else {
-                const dados = await crud.save("OrderProducts", produto.id, produto);
-                return dados;
-            }
+    if(dado.ProductId) {
+        if(dado.Products) {
+            dado.Products.push({ProductId: dado.ProductId, Quantity: dado.Quantity});
+        } else {
+            dado.Products = [{ProductId: dado.ProductId, Quantity: dado.Quantity}];
         }
     }
 
-    return { erro: "O pedido não possui o produto indicado!" }
+    for (const produto of dado.Products) {
+        try {
+            const produtoPedido = await crud.getById("Products", produto.ProductId);
+        } catch (error) {
+            return { erro: "Produto Inválido!" }
+        }   
+    }
+
+    const pedidoProduto = await crud.getWithFilter("OrderProducts", "OrderId", "==", dado.OrderId);
+
+    for (const produto of dado.Products) {
+        for (const produtoPedido of pedidoProduto) {
+            if (produtoPedido.ProductId == produto.ProductId) {
+
+                if(!produto.Quantity) {
+                    produto.Quantity = dado.Quantity;
+                }
+                produtoPedido.Quantity -= produto.Quantity;
+
+                if (produtoPedido.Quantity < 1) {
+                    const dados = await crud.remove("OrderProducts", produtoPedido.id);
+                } else {
+                    produtoPedido.OrderId = dado.OrderId;
+                    const dados = await crud.save("OrderProducts", produtoPedido.id, produtoPedido);
+                }
+            }
+        }   
+    }
+
+    const dados = await crud.getWithFilter("OrderProducts", "OrderId", "==", dado.OrderId);
+    return dados;
 }
 
 module.exports = {

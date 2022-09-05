@@ -6,8 +6,12 @@ async function buscarUsuarios() {
 }
 
 async function buscarPorID(id) {
-    const dados = await crud.getById("Users", id);
-    return dados;
+    try {
+        const dados = await crud.getById("Users", id);
+        return dados;
+    } catch (erro) {
+        return { erro: "ID Inválido!"}
+    }
 }
 
 async function criarUsuario(dado) {

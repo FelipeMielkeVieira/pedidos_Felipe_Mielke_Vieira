@@ -6,8 +6,12 @@ async function buscarProdutos() {
 }
 
 async function buscarPorID(id) {
-    const dados = await crud.getById("Products", id);
-    return dados;
+    try {
+        const dados = await crud.getById("Products", id);
+        return dados;
+    } catch (erro) {
+        return { erro: "ID Inválido!"}
+    }
 }
 
 async function criarProduto(dado) {
