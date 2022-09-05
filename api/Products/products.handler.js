@@ -10,7 +10,7 @@ async function buscarPorID(id) {
         const dados = await crud.getById("Products", id);
         return dados;
     } catch (erro) {
-        return { erro: "ID Inválido!"}
+        return { erro: "ID Inválido!" }
     }
 }
 
